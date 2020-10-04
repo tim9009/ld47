@@ -14,6 +14,9 @@ import store from '@/store'
 export default function start() {
 	const restarting = Vroom.state.running
 
+	store.state.gameStarted = true
+	store.state.gameConnecting = true
+
 	// Reset size of canvas
 	Vroom.updateSize(false)
 
@@ -30,7 +33,7 @@ export default function start() {
 		Vroom.run()
 
 		// Set main scene
-		mainScene.setScene()
+		mainScene.loadLevel(0)
 	}
 
 	// Reset glow effect

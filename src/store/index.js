@@ -5,18 +5,26 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    gameGuide: false,
     gameWon: false,
     gameLost: false,
+    gameStarted: false,
+    gameConnecting: false,
+    gameReconnecting: false,
+    currentLevel: {
+      nodeNumber: 0,
+      password: '',
+      passwordLength: 0,
+      hacked: false,
+      final: false,
+    },
     filters: {
       chromaticAberration: {
         enabled: true,
-        intensity: 2,
+        intensity: 3,
         phase: 0
       },
       vignette: {
-        enabled: true
-      },
-      lines: {
         enabled: true
       }
     }

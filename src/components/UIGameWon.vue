@@ -13,7 +13,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .gameWon {
     width: 100%;
     height: 100%;
@@ -21,7 +21,7 @@
     top: 0;
     left: 0;
     color: #fff;
-    background-color: #000
+    background-color: rgb(14, 18, 33)
   }
 
   .content {

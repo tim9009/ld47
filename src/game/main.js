@@ -4,10 +4,6 @@ import start from './start.js'
 
 import store from '@/store'
 
-// Load overlay image
-const lineImage = new Image()
-lineImage.src = require('@/assets/lines.png')
-
 Vroom.mainUpdateLoopExtension = function (secondsPassed) {
 	// If the game has not been won or lost
 	if(!store.state.gameLost && !store.state.gameWon) {
@@ -38,10 +34,6 @@ Vroom.mainRenderLoopExtension = function (ctx) {
 
 	if(store.state.filters.vignette.enabled) {
 		vignette(ctx)
-	}
-
-	if(store.state.filters.lines.enabled) {
-		lines(ctx)
 	}
 }
 
@@ -75,9 +67,4 @@ function vignette (ctx) {
 	// Draw vignette
 	ctx.fillStyle = gradient
 	ctx.fillRect(0, 0, Vroom.state.canvas.width, Vroom.state.canvas.height)
-}
-
-function lines (ctx)  {
-	// Draw line image
-	ctx.drawImage(lineImage, 0, 0, Vroom.state.canvas.width, Vroom.state.canvas.height)
 }

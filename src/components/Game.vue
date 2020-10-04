@@ -3,44 +3,62 @@
     <div class="canvasContainer">
       <canvas id="vroom-canvas" width="1920" height="1080" ref="canvas"></canvas>
 
+      <UIGameStatus />
+
+      <UIGameTitle v-if="!gameStarted" />
+
+      <UIGameConnecting v-if="gameConnecting" />
+
+      <UIGameReconnecting v-if="gameReconnecting" />
+
+      <transition name="fade">
+        <UIGameGuide v-if="gameGuide" />
+      </transition>
+
+      <transition name="fade">
+        <UIGameLost v-if="gameLost" />
+      </transition>
+
+      <transition name="fade">
+        <UIGameWon v-if="gameWon" />
+      </transition>
+
       <div class="overlay overlay--tv"></div>
     </div>
-
-    <transition name="fade">
-      <UIGameLost v-if="gameLost"/>
-    </transition>
-
-    <transition name="fade">
-      <UIGameWon v-if="gameWon"/>
-    </transition>
   </div>
 </template>
 
 <script>
   import store from '@/store'
 
+  import UIGameTitle from './UIGameTitle.vue'
+  import UIGameGuide from './UIGameGuide.vue'
+  import UIGameConnecting from './UIGameConnecting.vue'
+  import UIGameReconnecting from './UIGameReconnecting.vue'
   import UIGameLost from './UIGameLost.vue'
   import UIGameWon from './UIGameWon.vue'
-
-  // import { Vroom } from '../game/vroom/vroom.js'
+  import UIGameStatus from './UIGameStatus.vue'
 
   // Import game
   import init from '@/game/init'
-  import start from '@/game/start'
   import '@/game/main'
 
   export default {
     name: 'Game',
     components: {
+      UIGameTitle,
+      UIGameGuide,
+      UIGameConnecting,
+      UIGameReconnecting,
       UIGameLost,
-      UIGameWon
+      UIGameWon,
+      UIGameStatus
     },
     created () {
       window.addEventListener("resize", this.handleWindowResize)
     },
     mounted () {
       init()
-      window.setTimeout(start, 1000)
     },
     destroyed () {
       window.removeEventListener("resize", this.handleWindowResize)
@@ -54,11 +72,23 @@
       // }
     },
     computed: {
+      gameGuide () {
+        return store.state.gameGuide
+      },
       gameLost () {
         return store.state.gameLost
       },
       gameWon () {
         return store.state.gameWon
+      },
+      gameStarted () {
+        return store.state.gameStarted
+      },
+      gameConnecting () {
+        return store.state.gameConnecting
+      },
+      gameReconnecting () {
+        return store.state.gameReconnecting
       },
       overlayStyles () {
         if (!this.$refs.canvas) {
@@ -75,7 +105,7 @@
   .game {
     line-height: 0;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 2vw;
   }
 
   #vroom-canvas {
@@ -88,15 +118,28 @@
   }
 
   .overlay {
-    width: calc(100% + 120px);
-    height: calc(100% + 120px);
-    position: absolute;
-    top: -60px;
-    left: -60px;
-
     &--tv {
-      border: solid black 60px;
-      border-radius: 150px;
+      width: calc(100% + 160px);
+      height: calc(100% + 160px);
+      position: absolute;
+      top: -80px;
+      left: -80px;
+      border: solid black 80px;
+      border-radius: 50% / 10%;
+
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        z-index: 2;
+        background-size: 100% 2px, 3px 100%;
+        pointer-events: none;
+      }
     }
   }
 

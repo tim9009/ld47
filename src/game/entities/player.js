@@ -3,7 +3,7 @@ import { Vroom, Entity } from '../vroom/vroom.js'
 import store from '@/store'
 
 const player = new Entity({
-	layer: 2,
+	layer: 3,
 	physics: {
 		enabled: true,
 		entityType: Entity.DYNAMIC,
@@ -19,12 +19,13 @@ const player = new Entity({
 	},
 	mass: 15,
 	restitution: 0,
-	onCreated () {
-	},
 	init () {
 		console.log('Person running init')
 
 		this.active = false
+		this.dead = false
+		this.deadTime = new Date()
+		this.deadTimeout = 600
 		this.color = 'rgb(254, 252, 255)'
 		this.speed = 35
 		this.maxSpeed = 100
@@ -48,15 +49,33 @@ const player = new Entity({
 			} else {
 				// Handle collision on left side
 				if (this.getRight() == target.getLeft()) {
-					store.state.gameLost = true
+					this.dead = true
+					this.deadTime = new Date()
+					this.physics.enabled = false
+
+					store.state.gameReconnecting = true
 				}
 			}
 		}
 	},
 	update () {
 		// Handle game won / lost
-		if (store.state.gameWon || store.state.gameLost) {
+		if (!store.state.gameStarted || store.state.gameConnecting || store.state.gameWon || store.state.gameLost) {
 			return
+		}
+
+		// Handle player is dead
+		if (this.dead) {
+			// Handle death timeout reached
+			if (new Date() - this.deadTime > this.deadTimeout) {
+				this.physics.enabled = true
+				this.restart()
+				this.activate()
+
+				store.state.gameReconnecting = false
+			} else {
+				return
+			}
 		}
 
 		// Set speed
@@ -119,42 +138,43 @@ const player = new Entity({
 		// Save context
 		ctx.save()
 
-		// Enable glow effect
-		ctx.shadowBlur = 30
-		ctx.shadowColor = 'rgba(34, 255, 253, 1)'
-
 		// Calculate relative pos and dim
 		let relativePos = Vroom.util.getCameraRelativePos(this.pos)
 		let relativeDim = Vroom.util.getCameraRelativeDim(this.dim)
 
-		// Set color
-		ctx.fillStyle = this.color
-		// ctx.strokeStyle = this.color
+		// Enable glow effect
+		if (this.dead) {
+			ctx.fillStyle = '#404040'
+		} else {
+			ctx.shadowBlur = 30
+			ctx.shadowColor = 'rgba(34, 255, 253, 1)'
 
-		// Draw player
-		// ctx.beginPath()
-		// ctx.lineWidth = '4px'
-		// ctx.rect(relativePos.x + 0.5, relativePos.y + 0.5, relativeDim.width, relativeDim.height)
-		// // ctx.rect(this.pos.x + 0.5, this.pos.y + 0.5, this.dim.width, this.dim.height)
-		// ctx.stroke()
+
+			// Set color
+			ctx.fillStyle = this.color
+		}
+
 		ctx.fillRect(relativePos.x, relativePos.y, relativeDim.width, relativeDim.height)
 
 		// Restore context
 		ctx.restore()
-	},
-	afterRender () {
-
 	}
 })
 
 // On game restart
 player.restart = function () {
 	this.init()
+
+	// Remove any left over velocity
+	this.vel.x = 0
+	this.vel.y = 0
 }
 
 
 // Activate player with correct sate
 player.activate = function () {
+	this.dead = false
+
 	let initialPos = {
 		x: 1000,
 		y: 850

@@ -1,12 +1,15 @@
 import { Vroom, Entity } from '../vroom/vroom.js'
 
 import { player } from '../entities/player.js'
-// import { Obstacle } from '../entities/Obstacle.js'
+import { connection } from '../entities/connection.js'
 import { Terrain } from '../entities/Terrain.js'
+import { Item } from '../entities/Item.js'
 
-// import store from '@/store'
+// Levels
+import levelOne from '../levels/one.js'
+import levelTwo from '../levels/two.js'
 
-// const state = require('../state.js')
+import store from '@/store'
 
 const mainScene = new Entity({
 	layer: 1,
@@ -18,10 +21,22 @@ const mainScene = new Entity({
 		this.active = false
 		this.items = []
 		this.terrain = []
+		this.levelIndex = 0
+		this.levels = [
+			levelOne,
+			levelTwo
+		]
+		this.level = {}
 	},
 	update () {
 		if (!this.active) {
 			return
+		}
+
+		// Check if level is hacked
+		if (store.state.currentLevel.password.length >= this.level.items.length) {
+			store.state.currentLevel.hacked = true
+			connection.unlock()
 		}
 	},
 	render () {
@@ -38,6 +53,8 @@ mainScene.activate = function () {
 	Vroom.registerEntity(player)
 	player.activate()
 
+	Vroom.registerEntity(connection)
+
 	for (let item in this.items) {
 		Vroom.registerEntity(this.items[item])
 	}
@@ -51,6 +68,7 @@ mainScene.deactivate = function () {
 
 	// Deregister entities
 	Vroom.deregisterEntity(player._id)
+	Vroom.deregisterEntity(connection._id)
 
 	for (let item in this.items) {
 		Vroom.deregisterEntity(this.items[item]._id)
@@ -64,41 +82,27 @@ mainScene.deactivate = function () {
 // On game restart
 mainScene.restart = function () {
 	this.deactivate()
-	this.init()
+	this.active = false
+	this.items = []
+	this.terrain = []
+	this.level = {}
 }
 
-mainScene.setScene = function () {
-	// // Reset state
-	// this.items = []
+mainScene.setScene = function (level) {
+	// Set level in scene
+	this.level = level
 
-	// // Standard items
-	// this.items.push(new Obstacle({
-	// 	type: 'exit',
-	// 	pos: {
-	// 		x: 20,
-	// 		y: -80
-	// 	},
-	// 	dim: {
-	// 		width: 80,
-	// 		height: 80
-	// 	}
-	// }))
+	// Reset current level state
+	store.state.currentLevel.nodeNumber = level.nodeNumber
+	store.state.currentLevel.password = ''
+	store.state.currentLevel.passwordLength = level.items.length
+	store.state.currentLevel.hacked = false
+	store.state.currentLevel.final = level.final
 
-	// // Obstacles
-	// if (options.items && options.items.length) {
-	// 	for (let item in options.items) {
-	// 		this.items.push(new Obstacle({
-	// 			type: options.items[item].type || null,
-	// 			ammount: options.items[item].ammount || null,
-	// 			pos: {
-	// 				x: (options.items[item].pos && options.items[item].pos.x) ? options.items[item].pos.x : 0,
-	// 				y: (options.items[item].pos && options.items[item].pos.y) ? options.items[item].pos.y : 0
-	// 			}
-	// 		}))
-	// 	}
-	// }
+	// Activate connection
+	level.connection.pos.y = Vroom.state.canvas.height - level.connection.pos.y
+	connection.activate(level.connection)
 
-	// Standard terrain
 	this.terrain = []
 	const elementThickness = 50
 
@@ -115,78 +119,35 @@ mainScene.setScene = function () {
 		}
 	}))
 
-	// // Left wall
-	// this.terrain.push(new Terrain({
-	// 	pos: {
-	// 		x: 0,
-	// 		y: -wallHeight
-	// 	},
-	// 	dim: {
-	// 		width: elementThickness,
-	// 		height: wallHeight
-	// 	},
-	// 	type: 'wall'
-	// }))
+	// Create terrain from level file
+	for (let terrainData in this.level.terrain) {
+		this.terrain.push(new Terrain({
+			pos: {
+				x: this.level.terrain[terrainData].pos.x,
+				y: Vroom.state.canvas.height - (elementThickness * 2) - this.level.terrain[terrainData].pos.y
+			},
+			dim: {
+				width: this.level.terrain[terrainData].dim.width,
+				height: elementThickness
+			}
+		}))
+	}
 
-	// // Right wall
-	// this.terrain.push(new Terrain({
-	// 	pos: {
-	// 		x: mainSceneWidth - elementThickness,
-	// 		y: -wallHeight
-	// 	},
-	// 	dim: {
-	// 		width: elementThickness,
-	// 		height: wallHeight
-	// 	},
-	// 	type: 'wall'
-	// }))
+	this.items = []
 
-	this.terrain.push(new Terrain({
-		pos: {
-			x: 400,
-			y: Vroom.state.canvas.height - (elementThickness * 2) - 150
-		},
-		dim: {
-			width: 200,
-			height: elementThickness
-		}
-	}))
-
-	this.terrain.push(new Terrain({
-		pos: {
-			x: 900,
-			y: Vroom.state.canvas.height - (elementThickness * 2) - 350
-		},
-		dim: {
-			width: 200,
-			height: elementThickness
-		}
-	}))
-
-	this.terrain.push(new Terrain({
-		pos: {
-			x: 1400,
-			y: Vroom.state.canvas.height - (elementThickness * 2) - 400
-		},
-		dim: {
-			width: 100,
-			height: elementThickness
-		}
-	}))
-
-	this.terrain.push(new Terrain({
-		pos: {
-			x: 600,
-			y: Vroom.state.canvas.height - (elementThickness * 2) - 700
-		},
-		dim: {
-			width: 100,
-			height: elementThickness
-		}
-	}))
+	// Create items from level file
+	for (let itemData in this.level.items) {
+		this.items.push(new Item({
+			pos: {
+				x: this.level.items[itemData].pos.x,
+				y: Vroom.state.canvas.height - this.level.items[itemData].pos.y
+			},
+			icon: this.level.items[itemData].icon
+		}))
+	}
 }
 
-mainScene.deleteObstacle = function (id) {
+mainScene.deleteItem = function (id) {
 	for (let item in this.items) {
 		if (this.items[item]._id == id) {
 			Vroom.deregisterEntity(id)
@@ -194,6 +155,16 @@ mainScene.deleteObstacle = function (id) {
 			break
 		}
 	}
+}
+
+mainScene.loadLevel = function (levelIndex) {
+	this.restart()
+	this.setScene(this.levels[levelIndex])
+}
+
+mainScene.loadNextLevel = function () {
+	this.levelIndex++
+	this.loadLevel(this.levelIndex)
 }
 
 // Init call

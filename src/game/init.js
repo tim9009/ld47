@@ -7,7 +7,7 @@ export default function init() {
 		canvasId: 'vroom-canvas',
 		debug: {
 			enabled: false,
-			overlay: true
+			overlay: false
 		},
 		dim: {
 			width: 1152,

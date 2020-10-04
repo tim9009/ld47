@@ -1,5 +1,5 @@
 module.exports = {
-	nodeNumber: 1,
+	nodeNumber: 2,
 	terrain: [
 		{
 			pos: {
@@ -77,9 +77,10 @@ module.exports = {
 	],
 	connection: {
 		pos: {
-			x: 1400,
+			x: 900,
 			y: 1000
 		},
-		text: '10.0.2.1'
+		text: 'THE END',
+		final: true
 	}
 }

@@ -5,6 +5,7 @@ class Terrain extends Entity {
 	constructor(options) {
 		options = options || {}
 		super({
+			layer: 1,
 			physics: {
 				enabled: true,
 				entityType: Entity.STATIC,
@@ -29,22 +30,12 @@ class Terrain extends Entity {
 			return
 		}
 
-		// Save context
-		// ctx.save()
-
-		// Enable glow effect
-		// ctx.shadowBlur = 20
-		// ctx.shadowColor = 'rgb(200, 0, 150)'
-
 		let relativePos = Vroom.util.getCameraRelativePos(this.pos)
 		let relativeDim = Vroom.util.getCameraRelativeDim(this.dim)
 
 		ctx.fillStyle = this.color
 
 		ctx.fillRect(relativePos.x, relativePos.y, relativeDim.width, relativeDim.height)
-
-		// Restore context
-		// ctx.restore()
 	}
 }
 

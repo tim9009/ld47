@@ -21,7 +21,7 @@
     top: 0;
     left: 0;
     color: #fff;
-    background-color: #000;
+    background-color: rgb(14, 18, 33);
   }
 
   .content {
