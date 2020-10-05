@@ -1,8 +1,13 @@
 <template>
   <div class="gameWon">
     <div class="content">
-      <h1>Game won</h1>
-      <div>Press enter to play again</div>
+      <h1>Mainframe hacked!</h1>
+      <p>
+        Databases downloaded...
+      </p>
+      <div>
+        > Press enter to return to home screen
+      </div>
     </div>
   </div>
 </template>

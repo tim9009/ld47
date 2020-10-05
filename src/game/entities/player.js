@@ -1,4 +1,11 @@
-import { Vroom, Entity } from '../vroom/vroom.js'
+import { Vroom, Entity, Sound } from '../vroom/vroom.js'
+
+// Sounds
+import pickup from '../../assets/sound/pickup.wav'
+import death from '../../assets/sound/death.wav'
+import jump from '../../assets/sound/jump.wav'
+import smash from '../../assets/sound/smash.wav'
+import reconnect from '../../assets/sound/reconnect.wav'
 
 import store from '@/store'
 
@@ -22,9 +29,11 @@ const player = new Entity({
 	init () {
 		console.log('Person running init')
 
+		this.physics.enabled = true
+
 		this.active = false
 		this.dead = false
-		this.deadTime = new Date()
+		this.deadTime = Date.now()
 		this.deadTimeout = 600
 		this.color = 'rgb(254, 252, 255)'
 		this.speed = 35
@@ -36,6 +45,32 @@ const player = new Entity({
 		this.smashing = false
 		this.smashCount = 0
 		this.maxSmashCount = 1
+
+		// Sounds
+		this.soundPickup = new Sound(pickup)
+		this.soundPickup.loadBuffer()
+		this.soundPickup.gain = 0.6
+
+		this.soundDeath = new Sound(death)
+		this.soundDeath.loadBuffer()
+		this.soundDeath.gain = 0.6
+
+		this.soundJump = new Sound(jump)
+		this.soundJump.loadBuffer()
+		this.soundJump.gain = 0.3
+
+		this.soundSmash = new Sound(smash)
+		this.soundSmash.loadBuffer()
+		this.soundSmash.gain = 0.3
+
+		this.soundReconnect = new Sound(reconnect)
+		this.soundReconnect.loadBuffer()
+		this.soundReconnect.gain = 0.3
+	},
+	onCollision (target) {
+		if (target.type == 'item') {
+			this.soundPickup.play()
+		}
 	},
 	onCollisionAfterDisplace (target) {
 		if (target.type == 'terrain') {
@@ -54,6 +89,8 @@ const player = new Entity({
 					this.physics.enabled = false
 
 					store.state.gameReconnecting = true
+
+					this.soundDeath.play()
 				}
 			}
 		}
@@ -67,7 +104,9 @@ const player = new Entity({
 		// Handle player is dead
 		if (this.dead) {
 			// Handle death timeout reached
-			if (new Date() - this.deadTime > this.deadTimeout) {
+			if (Date.now() - this.deadTime > this.deadTimeout) {
+				this.soundReconnect.play()
+
 				this.physics.enabled = true
 				this.restart()
 				this.activate()
@@ -88,6 +127,8 @@ const player = new Entity({
 				this.onGround = false
 				this.jumping = true
 				this.jumpCount++
+
+				this.soundJump.play()
 			}
 		} else {
 			this.jumping = false
@@ -99,6 +140,8 @@ const player = new Entity({
 				this.vel.y = 60
 				this.smashing = true
 				this.smashCount++
+
+				this.soundSmash.play()
 			}
 		} else {
 			this.smashing = false
@@ -176,8 +219,8 @@ player.activate = function () {
 	this.dead = false
 
 	let initialPos = {
-		x: 1000,
-		y: 850
+		x: 10,
+		y: 900
 	}
 
 	this.pos.x = initialPos.x

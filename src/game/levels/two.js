@@ -4,7 +4,7 @@ module.exports = {
 		{
 			pos: {
 				x: 400,
-				y: 150
+				y: 300
 			},
 			dim: {
 				width: 200
@@ -13,74 +13,82 @@ module.exports = {
 		{
 			pos: {
 				x: 900,
-				y: 350
+				y: 300
 			},
 			dim: {
-				width: 200
+				width: 50
 			}
 		},
 		{
 			pos: {
-				x: 1400,
+				x: 900,
 				y: 400
 			},
 			dim: {
-				width: 100
+				width: 50
 			}
 		},
 		{
 			pos: {
-				x: 600,
-				y: 700
+				x: 900,
+				y: 500
 			},
 			dim: {
-				width: 100
+				width: 50
+			}
+		},
+		{
+			pos: {
+				x: 900,
+				y: 600
+			},
+			dim: {
+				width: 50
 			}
 		}
 	],
 	items: [
 		{
 			pos: {
-				x: 950,
-				y: 390
+				x: 1000,
+				y: 700
 			},
-			icon: 'H'
+			icon: 'C'
 		},
 		{
 			pos: {
-				x: 470,
-				y: 315
-			},
-			icon: '4'
-		},
-		{
-			pos: {
-				x: 990,
-				y: 520
-			},
-			icon: 'X'
-		},
-		{
-			pos: {
-				x: 1440,
-				y: 570
+				x: 1100,
+				y: 800
 			},
 			icon: '0'
 		},
 		{
 			pos: {
-				x: 635,
-				y: 870
+				x: 1090,
+				y: 520
 			},
-			icon: 'R'
+			icon: '1'
+		},
+		{
+			pos: {
+				x: 1400,
+				y: 570
+			},
+			icon: 'N'
+		},
+		{
+			pos: {
+				x: 1500,
+				y: 450
+			},
+			icon: '5'
 		}
 	],
 	connection: {
 		pos: {
-			x: 900,
+			x: 1200,
 			y: 1000
 		},
-		text: 'THE END',
-		final: true
+		text: '10.0.1.133'
 	}
 }

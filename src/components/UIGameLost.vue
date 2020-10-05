@@ -1,8 +1,13 @@
 <template>
   <div class="gameLost">
     <div class="content">
-      <h1>Game Lost</h1>
-      <div>Press enter to try again</div>
+      <h1>CONNECTION TERMINATED</h1>
+      <p>
+        You were detected by server security.<br>
+        The autorities have been notified.
+      </p>
+
+      <div>> Press enter to return to home screen</div>
     </div>
   </div>
 </template>

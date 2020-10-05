@@ -1,7 +1,10 @@
-import { Vroom, Entity } from '../vroom/vroom.js'
+import { Vroom, Entity, Sound } from '../vroom/vroom.js'
 
 import { mainScene } from '../scenes/mainScene.js'
 import { player } from './player.js'
+
+// Sounds
+import connectionOpen from '../../assets/sound/connection-open.wav'
 
 import store from '@/store'
 
@@ -27,6 +30,11 @@ const connection = new Entity({
 		this.color = 'rgb(254, 252, 255)'
 		this.locked = true
 		this.nextNode = ''
+
+		// Sounds
+		this.soundConnectionOpen = new Sound(connectionOpen)
+		this.soundConnectionOpen.loadBuffer()
+		this.soundConnectionOpen.gain = 0.6
 	},
 	onCollision (target) {
 		if (!this.active || this.locked) {
@@ -65,10 +73,15 @@ const connection = new Entity({
 		ctx.fillRect(relativePos.x, relativePos.y, relativeDim.width, relativeDim.height)
 
 		// Draw text
-		ctx.font = '50px monospace'
+		ctx.font = '40px monospace'
 		ctx.fillStyle = '#ff00a0'
 		ctx.textAlign = 'center'
-		ctx.fillText(this.text, relativePos.x + (relativeDim.width / 2), relativePos.y + (relativeDim.height / 2))
+
+		if (!store.state.currentLevel.final) {
+			ctx.fillText('Next node', relativePos.x + (relativeDim.width / 2), relativePos.y + (relativeDim.height / 2) - 25)
+		}
+
+		ctx.fillText(this.text, relativePos.x + (relativeDim.width / 2), relativePos.y + (relativeDim.height / 2) + 25)
 
 		// Restore context
 		ctx.restore()
@@ -86,13 +99,14 @@ connection.activate = function (options) {
 	this.active = true
 	this.locked = true
 	this.pos.x = options.pos.x
-	this.pos.y = options.pos.y
+	this.pos.y = Vroom.state.canvas.height - options.pos.y
 	this.text = options.text || ''
 	this.final = options.final || false
 }
 
 connection.unlock = function () {
 	this.locked = false
+	this.soundConnectionOpen.play()
 }
 
 // Init call

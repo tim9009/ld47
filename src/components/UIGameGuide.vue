@@ -1,12 +1,18 @@
 <template>
   <div class="gameGuide">
     <div class="content">
-      <h1>GUIDE</h1>
-      <div>Bla</div>
-      <div>Bla</div>
+      <h1>Help</h1>
+      <p>Firewall Surfer is a higly efficient password cracker and unauthorized access tool.<br>The GUI shows firewalls as white blocks and password fragments show up in a pink/red color.</p>
+      <p>You must keep up your momentum to avoid being detected.<br>Colliding with the side of a firewall will most likely result in you being detected.</p>
+      <p>Gather all the password fragments to crack the password and continue to the next server node.</p>
       <br>
+      <p>
+        <b>Controls:</b><br>
+        <b>W:</b> Jump (press again to double jump)<br>
+        <b>S:</b> Slam<br>
+      </p>
       <br>
-      <div>Press Q to close help/guide</div>
+      <div>> Press Q to close help/guide</div>
     </div>
   </div>
 </template>
@@ -21,8 +27,12 @@
     },
     methods: {
       keypress (e) {
+        if (!store.state.gameGuide) {
+          return
+        }
+
         // Q
-        if (e.keyCode == 81) {
+        if (e.key == 'q' || e.key == 'Q') {
           store.state.gameGuide = false
         }
       }

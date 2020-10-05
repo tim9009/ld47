@@ -15,7 +15,7 @@
     mounted () {
       // Add timeout to hide connection page
       window.setTimeout(function() {
-        store.state.gameConnecting = false
+        store.state.gameReconnecting = false
       }, 600)
     }
   }

@@ -55,13 +55,13 @@
       UIGameStatus
     },
     created () {
-      window.addEventListener("resize", this.handleWindowResize)
+      // window.addEventListener("resize", this.handleWindowResize)
     },
     mounted () {
       init()
     },
     destroyed () {
-      window.removeEventListener("resize", this.handleWindowResize)
+      // window.removeEventListener("resize", this.handleWindowResize)
     },
     updated () {
     },
@@ -105,7 +105,7 @@
   .game {
     line-height: 0;
     font-family: monospace;
-    font-size: 2vw;
+    font-size: 1.7vw;
   }
 
   #vroom-canvas {

@@ -2,6 +2,7 @@ import { Vroom } from './vroom/vroom.js'
 
 // Entities
 import { player } from './entities/player.js'
+import { connection } from './entities/connection.js'
 
 // Scenes
 import { mainScene } from './scenes/mainScene.js'
@@ -13,9 +14,6 @@ import store from '@/store'
 // Set initial store.state and start engine
 export default function start() {
 	const restarting = Vroom.state.running
-
-	store.state.gameStarted = true
-	store.state.gameConnecting = true
 
 	// Reset size of canvas
 	Vroom.updateSize(false)
@@ -31,14 +29,7 @@ export default function start() {
 
 		// Vroooom vrooom!
 		Vroom.run()
-
-		// Set main scene
-		mainScene.loadLevel(0)
 	}
-
-	// Reset glow effect
-	Vroom.state.ctx.shadowBlur = 0
-	Vroom.state.ctx.shadowColor = 'transparent'
 
 	// Activate camera
 	Vroom.activateCamera(Vroom.createCamera({
@@ -62,7 +53,9 @@ export default function start() {
 	// Restart entities if restarting
 	if(restarting) {
 		console.log('RESTARTING')
+		mainScene.restart()
 		player.restart()
+		connection.restart()
 	}
 
 	// Make sure no scene entities are already registered
@@ -71,8 +64,15 @@ export default function start() {
 	// Register scene entities
 	Vroom.registerEntity(mainScene)
 
+	// Load first level
+	mainScene.loadLevel(0)
+
 	// Activate main scene
 	mainScene.activate()
+
+	// Set state
+	store.state.gameStarted = true
+	store.state.gameConnecting = true
 
 	// Set focus on window to make the game work when played in an iFrame
 	window.focus()

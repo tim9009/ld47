@@ -2,20 +2,21 @@
   <div class="gameTitle">
     <div class="content">
       <h1>FIREWALL SURFER V1.7.3</h1>
-      <div>...Target acquired...</div>
-      <div>...Attack vectors mapped...</div>
+      <div>By Tim Eriksen</div>
+      <br>
+      <div>Target acquired...</div>
+      <div>Attack vectors mapped...</div>
       <br>
       <br>
-      <div>Press H for help/guide</div>
-      <br>
-      <br>
-      <div>Press enter to start attack on mainframe</div>
+      <div>> Press H for help/guide</div>
+      <div>> Press enter to start attack on mainframe</div>
     </div>
   </div>
 </template>
 
 <script>
   import start from '@/game/start'
+  import { Vroom } from '@/game/vroom/vroom.js'
 
   import store from '@/store'
 
@@ -26,15 +27,20 @@
     },
     methods: {
       keypress (e) {
-        // H
-        if (e.keyCode == 72) {
-          store.state.gameGuide = true
-          window.removeEventListener('keypress', this.keypress)
+        Vroom.state.audioCtx.resume()
+
+        if (store.state.gameStarted) {
+          return
         }
+
+        // H
+        if (e.key == 'h' || e.key == 'H') {
+          store.state.gameGuide = true
+        }
+
         // Enter
-        if (e.keyCode == 13) {
+        if (e.key == 'Enter') {
           start()
-          window.removeEventListener('keypress', this.keypress)
         }
       }
     }

@@ -14,7 +14,7 @@ class Item extends Entity {
 			physics: {
 				enabled: true,
 				entityType: Entity.STATIC,
-				collisionType: Entity.INELASTIC
+				collisionType: Entity.NONE
 			},
 			pos: {
 				x: (options.pos && options.pos.x) ? options.pos.x : 0,

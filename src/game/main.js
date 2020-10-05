@@ -1,38 +1,66 @@
-import { Vroom } from './vroom/vroom.js'
+import { Vroom, Sound } from './vroom/vroom.js'
 
-import start from './start.js'
+// import { mainScene } from './scenes/mainScene.js'
 
+// Sound
+import music from '../assets/sound/music.mp3'
+import connecting from '../assets/sound/connecting.wav'
+import gameLost from '../assets/sound/game-lost.wav'
+
+import start from '@/game/start'
 import store from '@/store'
 
-Vroom.mainUpdateLoopExtension = function (secondsPassed) {
-	// If the game has not been won or lost
-	if(!store.state.gameLost && !store.state.gameWon) {
-		// Check for loss condition
-		if(secondsPassed == 'ost') { // TEMP
-			store.state.gameLost = true
-		}
+// Set up music
+const soundMusic = new Sound(music)
+soundMusic.loadBuffer()
+soundMusic.gain = 0.8
+soundMusic.play()
 
-		// Check for win codition
-		if(secondsPassed == 'ost') { // TEMP
-			store.state.gameWon = true
+const soundConnecting = new Sound(connecting)
+soundConnecting.loadBuffer()
+soundConnecting.gain = 0.6
+
+const soundGameLost = new Sound(gameLost)
+soundGameLost.loadBuffer()
+soundGameLost.gain = 0.6
+
+Vroom.mainUpdateLoopExtension = function () {
+	// Check if connection has timeout
+	if (!store.state.gameLost && !store.state.gameWon && store.state.gameStarted && new Date() - store.state.currentLevel.connectionTime > store.state.currentLevel.connectionTimeout) {
+		store.state.gameLost = true
+		soundGameLost.play()
+	}
+
+	if (store.state.gameLost || store.state.gameWon) {
+		// ENTER
+		if (Vroom.isKeyPressed(13)) {
+			store.state.gameLost = false
+			store.state.gameWon = false
+			store.state.gameConnecting = false
+			store.state.gameReconnecting = false
+			store.state.gameStarted = false
+			start()
 		}
 	}
 
-	if(store.state.gameLost || store.state.gameWon) {
-		// ENTER
-		if(Vroom.isKeyPressed(13)) {
-			start()
-		}
+	// Music
+	if (soundMusic.ready && !soundMusic.playing) {
+		soundMusic.play()
+	}
+
+	// Connecting
+	if (store.state.gameConnecting && !soundConnecting.playing) {
+		soundConnecting.play()
 	}
 }
 
 Vroom.mainRenderLoopExtension = function (ctx) {
 	// Apply filters
-	if(store.state.filters.chromaticAberration.enabled) {
+	if (store.state.filters.chromaticAberration.enabled) {
 		chromaticAberration(ctx, store.state.filters.chromaticAberration.intensity, store.state.filters.chromaticAberration.phase)
 	}
 
-	if(store.state.filters.vignette.enabled) {
+	if (store.state.filters.vignette.enabled) {
 		vignette(ctx)
 	}
 }

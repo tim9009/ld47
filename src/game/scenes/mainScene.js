@@ -8,6 +8,8 @@ import { Item } from '../entities/Item.js'
 // Levels
 import levelOne from '../levels/one.js'
 import levelTwo from '../levels/two.js'
+import levelThree from '../levels/three.js'
+import mainframe from '../levels/mainframe.js'
 
 import store from '@/store'
 
@@ -17,14 +19,16 @@ const mainScene = new Entity({
 		enabled: false
 	},
 	init () {
-		console.log('Ground running init')
+		console.log('MainScene running init')
 		this.active = false
 		this.items = []
 		this.terrain = []
 		this.levelIndex = 0
 		this.levels = [
 			levelOne,
-			levelTwo
+			levelTwo,
+			levelThree,
+			mainframe
 		]
 		this.level = {}
 	},
@@ -34,10 +38,12 @@ const mainScene = new Entity({
 		}
 
 		// Check if level is hacked
-		if (store.state.currentLevel.password.length >= this.level.items.length) {
+		if (store.state.currentLevel.password.length >= this.level.items.length && connection.locked) {
 			store.state.currentLevel.hacked = true
 			connection.unlock()
 		}
+
+		// Check if connection timeout has been reached
 	},
 	render () {
 		if (!this.active) {
@@ -82,7 +88,6 @@ mainScene.deactivate = function () {
 // On game restart
 mainScene.restart = function () {
 	this.deactivate()
-	this.active = false
 	this.items = []
 	this.terrain = []
 	this.level = {}
@@ -97,10 +102,9 @@ mainScene.setScene = function (level) {
 	store.state.currentLevel.password = ''
 	store.state.currentLevel.passwordLength = level.items.length
 	store.state.currentLevel.hacked = false
-	store.state.currentLevel.final = level.final
+	store.state.currentLevel.final = level.connection.final
 
 	// Activate connection
-	level.connection.pos.y = Vroom.state.canvas.height - level.connection.pos.y
 	connection.activate(level.connection)
 
 	this.terrain = []
@@ -160,10 +164,12 @@ mainScene.deleteItem = function (id) {
 mainScene.loadLevel = function (levelIndex) {
 	this.restart()
 	this.setScene(this.levels[levelIndex])
+	store.state.gameConnecting = true
+	store.state.currentLevel.connectionTime = Date.now()
 }
 
 mainScene.loadNextLevel = function () {
-	this.levelIndex++
+	this.levelIndex += 1
 	this.loadLevel(this.levelIndex)
 }
 

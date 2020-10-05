@@ -12,6 +12,8 @@ export default new Vuex.Store({
     gameConnecting: false,
     gameReconnecting: false,
     currentLevel: {
+      connectionTime: 0,
+      connectionTimeout: 90000,
       nodeNumber: 0,
       password: '',
       passwordLength: 0,

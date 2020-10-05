@@ -3,7 +3,7 @@ module.exports = {
 	terrain: [
 		{
 			pos: {
-				x: 400,
+				x: 500,
 				y: 150
 			},
 			dim: {
@@ -12,7 +12,7 @@ module.exports = {
 		},
 		{
 			pos: {
-				x: 900,
+				x: 1000,
 				y: 350
 			},
 			dim: {
@@ -21,7 +21,7 @@ module.exports = {
 		},
 		{
 			pos: {
-				x: 1400,
+				x: 1500,
 				y: 400
 			},
 			dim: {
@@ -41,28 +41,28 @@ module.exports = {
 	items: [
 		{
 			pos: {
-				x: 950,
+				x: 1090,
 				y: 390
 			},
 			icon: 'H'
 		},
 		{
 			pos: {
-				x: 470,
-				y: 315
+				x: 590,
+				y: 320
 			},
 			icon: '4'
 		},
 		{
 			pos: {
-				x: 990,
+				x: 1090,
 				y: 520
 			},
 			icon: 'X'
 		},
 		{
 			pos: {
-				x: 1440,
+				x: 1540,
 				y: 570
 			},
 			icon: '0'
@@ -77,9 +77,9 @@ module.exports = {
 	],
 	connection: {
 		pos: {
-			x: 1400,
+			x: 100,
 			y: 1000
 		},
-		text: '10.0.2.1'
+		text: '10.0.1.221'
 	}
 }
